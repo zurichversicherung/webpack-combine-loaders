@@ -6,11 +6,30 @@ function combineLoaders(loaders) {
       return loaderEntry;
     }
 
-    var query = qs.stringify(
-    loaderEntry.options || loaderEntry.query, {
+    var query = qs.stringify(loaderEntry.query, {
       arrayFormat: 'brackets',
       encode: false,
     });
+
+    if (loaderEntry.options) {
+      query = Object.keys(loaderEntry.options)
+        .map((optionKey) => {
+          const optionValue = loaderEntry.options[optionKey];
+          const newQueryObject = {};
+          newQueryObject[optionKey] = optionValue;
+
+          // if option key has an array as value, use JSON stringify instead of qs.stringify
+          if (typeof optionValue === 'object' && !Array.isArray(optionValue)) {
+            return JSON.stringify(newQueryObject);
+          } else {
+            return qs.stringify(newQueryObject, {
+              arrayFormat: 'brackets',
+              encode: false,
+            });
+          }
+        })
+        .join('&');
+    }
 
     if (query) {
       query = '?' + query;

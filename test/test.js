@@ -27,3 +27,28 @@ test('example', (t) => {
   t.equals(output, expected);
   t.end();
 });
+
+test('example with object', (t) => {
+  const output = combineLoaders([
+    {
+      loader: 'style-loader',
+      options: {
+        attrs: {
+          id: 'test-id'
+        }
+      }
+    },
+    {
+      loader: 'sass-resources-loader',
+      options: {
+        // Or array of paths
+        resources: [
+          'path/to/your/resource'
+        ]
+      },
+    }
+  ]);
+  const expected = 'style-loader?{"attrs":{"id":"test-id"}}!sass-resources-loader?resources[]=path/to/your/resource';
+  t.equals(output, expected);
+  t.end();
+});
